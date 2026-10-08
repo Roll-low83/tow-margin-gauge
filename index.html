@@ -1,0 +1,682 @@
+<title>Tow Margin Gauge</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+  :root {
+    --bg: #f5f7f5;
+    --surface: #ffffff;
+    --surface-2: #eef3f0;
+    --text: #182420;
+    --text-muted: #5b6b62;
+    --accent: #1e5e4a;
+    --accent-2: #4f9782;
+    --border: #d9e3dc;
+    --good: #1e7a52;
+    --good-bg: #e5f3ea;
+    --warn: #b45309;
+    --warn-bg: #fdf3e9;
+    --danger: #b3261e;
+    --danger-bg: #fbe9e7;
+    --track: #e3eae5;
+    --shadow: rgba(30, 60, 48, 0.10);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c1512;
+      --surface: #12201a;
+      --surface-2: #17271f;
+      --text: #eaf3ee;
+      --text-muted: #93a89c;
+      --accent: #3fbf8f;
+      --accent-2: #7fd6b6;
+      --border: #24352c;
+      --good: #3fbf8f;
+      --good-bg: #143126;
+      --warn: #f0a446;
+      --warn-bg: #2e2312;
+      --danger: #ff7a6b;
+      --danger-bg: #331714;
+      --track: #1c2b24;
+      --shadow: rgba(0, 0, 0, 0.4);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c1512;
+    --surface: #12201a;
+    --surface-2: #17271f;
+    --text: #eaf3ee;
+    --text-muted: #93a89c;
+    --accent: #3fbf8f;
+    --accent-2: #7fd6b6;
+    --border: #24352c;
+    --good: #3fbf8f;
+    --good-bg: #143126;
+    --warn: #f0a446;
+    --warn-bg: #2e2312;
+    --danger: #ff7a6b;
+    --danger-bg: #331714;
+    --track: #1c2b24;
+    --shadow: rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', Arial, sans-serif;
+    line-height: 1.5;
+    padding-block: 2.5rem;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  header.top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1.75rem;
+  }
+  header.top .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-2);
+  }
+  header.top h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 800;
+    font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+    margin: 0;
+    text-wrap: balance;
+    color: var(--text);
+  }
+  header.top p.tag {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 780px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 24px var(--shadow);
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.2rem;
+    margin: 0 0 0.2rem;
+    color: var(--accent);
+  }
+  .card p.hint {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0 0 1rem;
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 1.35rem;
+  }
+  fieldset legend {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--accent-2);
+    padding: 0 0 0.55rem;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+  }
+  @media (max-width: 460px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .field label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .field .input-unit {
+    position: relative;
+  }
+  .field input {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.98rem;
+    font-variant-numeric: tabular-nums;
+    padding: 0.55rem 2.6rem 0.55rem 0.7rem;
+    border-radius: 8px;
+    border: 1.4px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .field input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .field .unit {
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .reset-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: transparent;
+    border: 1.4px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    cursor: pointer;
+  }
+  .reset-btn:hover { border-color: var(--accent); }
+
+  .privacy-note {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 0.9rem;
+  }
+
+  .vin-lookup {
+    margin-bottom: 1.35rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .vin-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .vin-optional {
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .vin-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .vin-row input {
+    flex: 1;
+    min-width: 0;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    border: 1.4px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .vin-row input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .vin-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .vin-btn:hover { background: var(--accent-2); }
+  .vin-btn:disabled { opacity: 0.6; cursor: default; }
+  .vin-result {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .vin-result:empty { margin-top: 0; }
+  .vin-result .vin-id {
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .vin-result.vin-error {
+    color: var(--warn);
+    background: var(--warn-bg);
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+  }
+
+  /* GAUGE PANEL */
+  .verdict {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.35rem;
+    font-weight: 700;
+  }
+  .verdict .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .verdict.good { background: var(--good-bg); color: var(--good); }
+  .verdict.good .dot { background: var(--good); }
+  .verdict.warn { background: var(--warn-bg); color: var(--warn); }
+  .verdict.warn .dot { background: var(--warn); }
+  .verdict.danger { background: var(--danger-bg); color: var(--danger); }
+  .verdict.danger .dot { background: var(--danger); }
+
+  .gauge {
+    margin-bottom: 1.35rem;
+  }
+  .gauge:last-child { margin-bottom: 0; }
+  .gauge .gauge-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.15rem;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+  .gauge .gauge-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+  .gauge .gauge-sub {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin: 0 0 0.4rem;
+  }
+  .gauge .gauge-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.12rem 0.5rem;
+    border-radius: 20px;
+  }
+  .gauge-chip.good { background: var(--good-bg); color: var(--good); }
+  .gauge-chip.warn { background: var(--warn-bg); color: var(--warn); }
+  .gauge-chip.danger { background: var(--danger-bg); color: var(--danger); }
+
+  .track {
+    position: relative;
+    height: 14px;
+    background: var(--track);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .track .fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 8px;
+    transition: width 0.25s ease, background 0.25s ease;
+  }
+  .track .limit-mark {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 2px;
+    background: var(--text);
+    opacity: 0.4;
+  }
+  .track .band {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: color-mix(in srgb, var(--good) 30%, transparent);
+    border-left: 1.5px solid var(--good);
+    border-right: 1.5px solid var(--good);
+  }
+  .track .marker {
+    position: absolute;
+    top: -4px;
+    width: 3px;
+    height: 22px;
+    background: var(--text);
+    border-radius: 2px;
+  }
+
+  .gauge .readout {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .callout {
+    border-left: 4px solid var(--warn);
+    background: var(--warn-bg);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .callout strong { color: var(--warn); }
+
+  footer.book-footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  footer.book-footer .brand { color: var(--accent); font-weight: 700; }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Tow Like a Pro &middot; Companion Tool</span>
+    <h1>Tow Margin Gauge</h1>
+    <p class="tag">Enter your tow vehicle and trailer numbers to see exactly how much margin you have &mdash; read like a dashboard, not a spreadsheet.</p>
+  </header>
+
+  <div class="layout">
+    <section class="card" aria-label="Your numbers">
+      <h2>Your Numbers</h2>
+      <p class="hint">Example figures are loaded below &mdash; a Silverado 1500 towing a mid-size travel trailer. Replace them with your own from the door sticker and trailer weight tag.</p>
+
+      <div class="vin-lookup">
+        <label for="vinInput" class="vin-label">VIN Lookup <span class="vin-optional">(optional &mdash; identifies your vehicle, doesn't replace the door sticker)</span></label>
+        <div class="vin-row">
+          <input type="text" id="vinInput" maxlength="17" placeholder="17-character VIN" autocomplete="off" spellcheck="false">
+          <button class="vin-btn" id="vinLookupBtn" type="button">Look Up Vehicle</button>
+        </div>
+        <div class="vin-result" id="vinResult" aria-live="polite"></div>
+      </div>
+
+      <fieldset>
+        <legend>Tow Vehicle</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="towRating">Tow Rating</label>
+            <div class="input-unit"><input type="number" id="towRating" value="9500" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+          <div class="field">
+            <label for="payloadCap">Payload Capacity</label>
+            <div class="input-unit"><input type="number" id="payloadCap" value="1730" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Trailer</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="dryWeight">Dry Weight (UVW)</label>
+            <div class="input-unit"><input type="number" id="dryWeight" value="6200" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+          <div class="field">
+            <label for="gvwr">GVWR (max loaded)</label>
+            <div class="input-unit"><input type="number" id="gvwr" value="7500" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+          <div class="field">
+            <label for="tongueWeight">Tongue Weight</label>
+            <div class="input-unit"><input type="number" id="tongueWeight" value="640" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+          <div class="field">
+            <label for="cargoTrailer">Cargo + Water in Trailer</label>
+            <div class="input-unit"><input type="number" id="cargoTrailer" value="450" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>In the Tow Vehicle</legend>
+        <div class="field-row">
+          <div class="field">
+            <label for="passengers">Passengers + Cargo</label>
+            <div class="input-unit"><input type="number" id="passengers" value="380" min="0" step="10"><span class="unit">lbs</span></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <button class="reset-btn" id="resetBtn" type="button">Clear to blank form</button>
+      <p class="privacy-note">Runs entirely in your browser &mdash; nothing you enter is saved. A VIN lookup (when available) queries NHTSA's free public vehicle database directly from your browser; no other data is sent anywhere.</p>
+    </section>
+
+    <section class="card" aria-label="Your margin">
+      <h2>Your Margin</h2>
+      <p class="hint">Four checks, read like gauges. Green means normal safety checks apply; amber or red means stop and recheck before you tow.</p>
+
+      <div class="verdict" id="overallVerdict" role="status" aria-live="polite">
+        <span class="dot"></span>
+        <span id="overallText">&nbsp;</span>
+      </div>
+
+      <div class="gauge" id="gaugeGVWR">
+        <div class="gauge-head">
+          <span class="gauge-name">Loaded Trailer Weight vs. GVWR</span>
+          <span class="gauge-chip" id="chipGVWR"></span>
+        </div>
+        <div class="track"><div class="fill" id="fillGVWR"></div><div class="limit-mark" style="left:100%"></div></div>
+        <div class="readout"><span id="readGVWR"></span><span id="pctGVWR"></span></div>
+      </div>
+
+      <div class="gauge" id="gaugeTowRating">
+        <div class="gauge-head">
+          <span class="gauge-name">Loaded Trailer Weight vs. Tow Rating</span>
+          <span class="gauge-chip" id="chipTowRating"></span>
+        </div>
+        <div class="track"><div class="fill" id="fillTowRating"></div><div class="limit-mark" style="left:100%"></div></div>
+        <div class="readout"><span id="readTowRating"></span><span id="pctTowRating"></span></div>
+      </div>
+
+      <div class="gauge" id="gaugePayload">
+        <div class="gauge-head">
+          <span class="gauge-name">Vehicle Payload Used</span>
+          <span class="gauge-chip" id="chipPayload"></span>
+        </div>
+        <div class="track"><div class="fill" id="fillPayload"></div><div class="limit-mark" style="left:100%"></div></div>
+        <div class="readout"><span id="readPayload"></span><span id="pctPayload"></span></div>
+      </div>
+
+      <div class="gauge" id="gaugeTongue">
+        <div class="gauge-head">
+          <span class="gauge-name">Tongue Weight Ratio</span>
+          <span class="gauge-chip" id="chipTongue"></span>
+        </div>
+        <p class="gauge-sub">Healthy range: 10&ndash;15% of loaded trailer weight</p>
+        <div class="track">
+          <div class="band" id="bandTongue"></div>
+          <div class="marker" id="markerTongue"></div>
+        </div>
+        <div class="readout"><span id="readTongue"></span><span></span></div>
+      </div>
+
+      <div class="callout"><strong>Remember:</strong> payload, not tow rating, is where most owners get caught out. These gauges are an estimate to help you plan &mdash; always confirm final numbers against your manufacturer's specs before you tow.</div>
+    </section>
+  </div>
+
+  <footer class="book-footer"><span class="brand">Tow Like a Pro</span> &middot; RV Bro Rolo's Tow Margin Gauge</footer>
+</div>
+
+<script>
+(function () {
+  const ids = ['towRating', 'payloadCap', 'dryWeight', 'gvwr', 'tongueWeight', 'cargoTrailer', 'passengers'];
+  const inputs = {};
+  ids.forEach(id => { inputs[id] = document.getElementById(id); });
+
+  function num(id) {
+    const v = parseFloat(inputs[id].value);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function statusFromRatio(ratio) {
+    if (ratio > 1) return 'danger';
+    if (ratio >= 0.9) return 'warn';
+    return 'good';
+  }
+
+  function labelFromStatus(s) {
+    return s === 'danger' ? 'Over' : s === 'warn' ? 'Close' : 'OK';
+  }
+
+  function setGauge(prefix, used, limit) {
+    const ratio = limit > 0 ? used / limit : 0;
+    const status = statusFromRatio(ratio);
+    const fill = document.getElementById('fill' + prefix);
+    const chip = document.getElementById('chip' + prefix);
+    const read = document.getElementById('read' + prefix);
+    const pct = document.getElementById('pct' + prefix);
+    const widthPct = Math.min(ratio, 1.08) * 100;
+    fill.style.width = widthPct + '%';
+    const colorVar = status === 'danger' ? 'var(--danger)' : status === 'warn' ? 'var(--warn)' : 'var(--good)';
+    fill.style.background = colorVar;
+    chip.textContent = labelFromStatus(status);
+    chip.className = 'gauge-chip ' + status;
+    read.textContent = Math.round(used).toLocaleString() + ' / ' + Math.round(limit).toLocaleString() + ' lbs';
+    pct.textContent = Math.round(ratio * 100) + '% used';
+    return status;
+  }
+
+  function calc() {
+    const towRating = num('towRating');
+    const payloadCap = num('payloadCap');
+    const dryWeight = num('dryWeight');
+    const gvwr = num('gvwr');
+    const tongueWeight = num('tongueWeight');
+    const cargoTrailer = num('cargoTrailer');
+    const passengers = num('passengers');
+
+    const loadedTrailer = dryWeight + cargoTrailer;
+    const vehiclePayloadUsed = tongueWeight + passengers;
+
+    const s1 = setGauge('GVWR', loadedTrailer, gvwr);
+    const s2 = setGauge('TowRating', loadedTrailer, towRating);
+    const s3 = setGauge('Payload', vehiclePayloadUsed, payloadCap);
+
+    // Tongue weight ratio (healthy band 10-15%), scale 0-25%
+    const tongueRatio = loadedTrailer > 0 ? (tongueWeight / loadedTrailer) * 100 : 0;
+    const scaleMax = 25;
+    const bandEl = document.getElementById('bandTongue');
+    const markerEl = document.getElementById('markerTongue');
+    const chipTongue = document.getElementById('chipTongue');
+    const readTongue = document.getElementById('readTongue');
+    const bandLeft = (10 / scaleMax) * 100;
+    const bandWidth = ((15 - 10) / scaleMax) * 100;
+    bandEl.style.left = bandLeft + '%';
+    bandEl.style.width = bandWidth + '%';
+    const markerLeft = Math.min(Math.max(tongueRatio, 0), scaleMax) / scaleMax * 100;
+    markerEl.style.left = 'calc(' + markerLeft + '% - 1.5px)';
+    let s4 = 'good';
+    if (tongueRatio < 8 || tongueRatio > 17) s4 = 'danger';
+    else if (tongueRatio < 10 || tongueRatio > 15) s4 = 'warn';
+    chipTongue.textContent = labelFromStatus(s4);
+    chipTongue.className = 'gauge-chip ' + s4;
+    readTongue.textContent = tongueRatio.toFixed(1) + '% of loaded trailer weight';
+
+    const statuses = [s1, s2, s3, s4];
+    const overall = statuses.includes('danger') ? 'danger' : statuses.includes('warn') ? 'warn' : 'good';
+    const overallEl = document.getElementById('overallVerdict');
+    const overallText = document.getElementById('overallText');
+    overallEl.className = 'verdict ' + overall;
+    overallText.textContent = overall === 'good'
+      ? 'Within margin — normal safety checks apply.'
+      : overall === 'warn'
+      ? 'Cutting it close — recheck these numbers before you go.'
+      : 'Over the limit — reconsider this pairing before you tow.';
+  }
+
+  ids.forEach(id => inputs[id].addEventListener('input', calc));
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    ids.forEach(id => { inputs[id].value = ''; });
+    calc();
+  });
+
+  // --- VIN Lookup (optional) ---
+  const vinInput = document.getElementById('vinInput');
+  const vinBtn = document.getElementById('vinLookupBtn');
+  const vinResult = document.getElementById('vinResult');
+
+  async function lookupVin() {
+    const vin = vinInput.value.trim().toUpperCase();
+    if (vin.length !== 17) {
+      vinResult.className = 'vin-result vin-error';
+      vinResult.textContent = 'A VIN is 17 characters. Double-check and try again.';
+      return;
+    }
+    vinBtn.disabled = true;
+    vinBtn.textContent = 'Looking up…';
+    vinResult.className = 'vin-result';
+    vinResult.textContent = 'Decoding VIN…';
+    try {
+      const res = await fetch('https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/' + encodeURIComponent(vin) + '?format=json');
+      if (!res.ok) throw new Error('bad-response');
+      const data = await res.json();
+      const row = data.Results && data.Results[0];
+      if (!row || !row.Make) throw new Error('no-match');
+      const year = row.ModelYear || '—';
+      const make = row.Make || '—';
+      const model = row.Model || '—';
+      const trim = row.Trim || row.Series || '';
+      const drive = row.DriveType || '';
+      const gvwrClass = row.GVWR || '';
+      vinResult.className = 'vin-result';
+      vinResult.innerHTML = '<span class="vin-id">' + year + ' ' + make + ' ' + model + (trim ? ' ' + trim : '') + '</span>' +
+        (drive ? 'Drivetrain: ' + drive + '. ' : '') +
+        (gvwrClass ? 'GVWR class (ballpark): ' + gvwrClass + '. ' : '') +
+        'That confirms what vehicle this is &mdash; it doesn\'t replace the Tow Rating and Payload Capacity on your door sticker. Enter those two numbers above exactly as printed.';
+    } catch (err) {
+      vinResult.className = 'vin-result vin-error';
+      vinResult.textContent = 'VIN lookup needs a live connection to NHTSA\'s database, which this preview can\'t reach. Once this page is hosted on its own web address (like GitHub Pages), lookup works automatically — no changes needed. In the meantime, just enter your numbers manually below.';
+    } finally {
+      vinBtn.disabled = false;
+      vinBtn.textContent = 'Look Up Vehicle';
+    }
+  }
+
+  vinBtn.addEventListener('click', lookupVin);
+  vinInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); lookupVin(); }
+  });
+
+  calc();
+})();
+</script>
